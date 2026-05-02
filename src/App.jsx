@@ -1,0 +1,62 @@
+import { useEffect } from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { useAuthStore } from './store/auth'
+import { AuthPage } from './pages/AuthPage'
+import { OnboardingPage } from './pages/OnboardingPage'
+import { DashboardPage } from './pages/DashboardPage'
+import { ProfilePage } from './pages/ProfilePage'
+import { LeaderboardPage } from './pages/LeaderboardPage'
+import { AppLayout } from './components/layout/AppLayout'
+
+function ProtectedRoute({ children }) {
+  const { user, loading } = useAuthStore()
+  if (loading) return <LoadingScreen />
+  if (!user) return <Navigate to="/auth" replace />
+  return children
+}
+
+function PublicRoute({ children }) {
+  const { user, loading } = useAuthStore()
+  if (loading) return <LoadingScreen />
+  if (user) return <Navigate to="/dashboard" replace />
+  return children
+}
+
+function LoadingScreen() {
+  return (
+    <div style={{
+      minHeight: '100vh', display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center', background: 'var(--bg-void)', gap: '16px'
+    }}>
+      <div style={{
+        fontFamily: 'var(--font-display)', fontSize: '32px', fontWeight: 700,
+        color: 'var(--accent-purple)', letterSpacing: '0.1em'
+      }}>RISE</div>
+      <div style={{
+        width: '40px', height: '2px',
+        backgroundImage: 'linear-gradient(90deg, transparent, var(--accent-purple), transparent)',
+        backgroundSize: '200% auto', animation: 'shimmer 1s linear infinite'
+      }} />
+    </div>
+  )
+}
+
+export default function App() {
+  const init = useAuthStore(s => s.init)
+  useEffect(() => { init() }, [init])
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/auth" element={<PublicRoute><AuthPage /></PublicRoute>} />
+        <Route path="/onboarding" element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>} />
+        <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/leaderboard" element={<LeaderboardPage />} />
+        </Route>
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      </Routes>
+    </BrowserRouter>
+  )
+}

@@ -1,0 +1,66 @@
+
+
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+@import "tailwindcss";
+
+:root {
+  --bg-void: #080a0f;
+  --bg-deep: #0d1117;
+  --bg-surface: #131921;
+  --bg-elevated: #1a2332;
+  --bg-card: #1e2a3a;
+  --border-dim: rgba(255,255,255,0.06);
+  --border-glow: rgba(139,92,246,0.3);
+  --accent-purple: #8b5cf6;
+  --accent-purple-dim: rgba(139,92,246,0.15);
+  --accent-amber: #f59e0b;
+  --accent-amber-dim: rgba(245,158,11,0.15);
+  --accent-teal: #14b8a6;
+  --rank-e: #6b7280;
+  --rank-d: #22c55e;
+  --rank-c: #3b82f6;
+  --rank-b: #8b5cf6;
+  --rank-a: #f59e0b;
+  --rank-s: #ef4444;
+  --rank-ss: #ffffff;
+  --text-primary: #f0f4ff;
+  --text-secondary: #8892a4;
+  --text-dim: #4a5568;
+  --font-display: 'Rajdhani', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display { font-family: var(--font-display); }
+.rank-e { color: var(--rank-e); }
+.rank-d { color: var(--rank-d); }
+.rank-c { color: var(--rank-c); }
+.rank-b { color: var(--rank-b); }
+.rank-a { color: var(--rank-a); }
+.rank-s { color: var(--rank-s); }
+.rank-ss { color: var(--rank-ss); text-shadow: 0 0 20px rgba(255,255,255,0.5); }
+
+.glow-purple { box-shadow: 0 0 20px rgba(139,92,246,0.2), 0 0 60px rgba(139,92,246,0.05); }
+.glow-amber  { box-shadow: 0 0 20px rgba(245,158,11,0.2), 0 0 60px rgba(245,158,11,0.05); }
+
+@keyframes borderPulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+.border-pulse { animation: borderPulse 2s ease-in-out infinite; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.fade-up { animation: fadeUp 0.4s ease forwards; }
+
+@keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+.shimmer { background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%); background-size: 200% auto; animation: shimmer 2s linear infinite; }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-void); }
+::-webkit-scrollbar-thumb { background: var(--border-dim); border-radius: 2px; }

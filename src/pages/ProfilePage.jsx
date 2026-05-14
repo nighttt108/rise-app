@@ -2,13 +2,15 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuthStore } from '../store/auth'
 import { RANK_COLORS, RANK_NAMES } from '../lib/xp'
-import { Flame, Zap, CheckCircle2, Trophy, LogOut } from 'lucide-react'
+import { Flame, Zap, CheckCircle2, Trophy, LogOut, Settings } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 const GENRE_ICONS = { fitness: '⚔️', running: '🏃', study: '📖' }
 const RARITY_COLORS = { common: '#6b7280', rare: '#3b82f6', epic: '#8b5cf6', legendary: '#f59e0b' }
 
 export function ProfilePage() {
   const { user, profile, signOut } = useAuthStore()
+  const navigate = useNavigate()
   const [progress, setProgress] = useState([])
   const [inventory, setInventory] = useState([])
   const [equipped, setEquipped] = useState(null)
@@ -193,6 +195,18 @@ export function ProfilePage() {
           </div>
         </>
       )}
+
+      {/* Manage paths */}
+      <button onClick={() => navigate('/manage-paths')} style={{
+        width: '100%', padding: '13px', background: 'var(--bg-surface)',
+        border: '1px solid var(--border-dim)', borderRadius: '12px', cursor: 'pointer',
+        color: 'var(--text-primary)', fontSize: '14px', fontWeight: 600,
+        fontFamily: 'var(--font-display)', letterSpacing: '0.1em',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+        marginBottom: '10px'
+      }}>
+        <Settings size={16} /> MANAGE PATHS
+      </button>
 
       {/* Sign out */}
       <button onClick={signOut} style={{

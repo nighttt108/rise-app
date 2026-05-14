@@ -6,6 +6,7 @@ import { OnboardingPage } from './pages/OnboardingPage'
 import { DashboardPage } from './pages/DashboardPage'
 import { ProfilePage } from './pages/ProfilePage'
 import { LeaderboardPage } from './pages/LeaderboardPage'
+import { ManagePathsPage } from './pages/ManagePathsPage'
 import { AppLayout } from './components/layout/AppLayout'
 
 function ProtectedRoute({ children }) {
@@ -24,19 +25,10 @@ function PublicRoute({ children }) {
 
 function LoadingScreen() {
   return (
-    <div style={{
-      minHeight: '100vh', display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center', background: 'var(--bg-void)', gap: '16px'
-    }}>
-      <div style={{
-        fontFamily: 'var(--font-display)', fontSize: '32px', fontWeight: 700,
-        color: 'var(--accent-purple)', letterSpacing: '0.1em'
-      }}>RISE</div>
-      <div style={{
-        width: '40px', height: '2px',
-        backgroundImage: 'linear-gradient(90deg, transparent, var(--accent-purple), transparent)',
-        backgroundSize: '200% auto', animation: 'shimmer 1s linear infinite'
-      }} />
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-void)', gap: '16px' }}>
+      <div style={{ fontFamily: 'var(--font-display)', fontSize: '32px', fontWeight: 700, color: 'var(--accent-purple)', letterSpacing: '0.1em' }}>RISE</div>
+      <div style={{ width: '40px', height: '2px', backgroundImage: 'linear-gradient(90deg, transparent, var(--accent-purple), transparent)', backgroundSize: '200% auto', animation: 'shimmer 1s linear infinite' }} />
+      <style>{`@keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }`}</style>
     </div>
   )
 }
@@ -44,7 +36,6 @@ function LoadingScreen() {
 export default function App() {
   const init = useAuthStore(s => s.init)
   useEffect(() => { init() }, [init])
-
   return (
     <BrowserRouter>
       <Routes>
@@ -54,6 +45,7 @@ export default function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/leaderboard" element={<LeaderboardPage />} />
+          <Route path="/manage-paths" element={<ManagePathsPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>

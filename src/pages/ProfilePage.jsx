@@ -208,6 +208,18 @@ export function ProfilePage() {
         <Settings size={16} /> MANAGE PATHS
       </button>
 
+      {/* Change username */}
+      <button onClick={() => navigate('/setup-username')} style={{
+        width: '100%', padding: '13px', background: 'var(--bg-surface)',
+        border: '1px solid var(--border-dim)', borderRadius: '12px', cursor: 'pointer',
+        color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 600,
+        fontFamily: 'var(--font-display)', letterSpacing: '0.1em',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+        marginBottom: '10px'
+      }}>
+        ✏️ CHANGE USERNAME
+      </button>
+
       {/* Sign out */}
       <button onClick={signOut} style={{
         width: '100%', padding: '13px', background: 'transparent',

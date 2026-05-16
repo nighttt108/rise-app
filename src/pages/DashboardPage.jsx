@@ -4,7 +4,6 @@ import { useAuthStore } from '../store/auth'
 import { getXPProgressInRank, getNextRank, RANK_COLORS, RANK_NAMES } from '../lib/xp'
 import { CheckCircle2, Circle, Flame, Lock, ChevronDown, ChevronUp, Zap } from 'lucide-react'
 import { RankUpAnimation } from '../components/ui/RankUpAnimation'
-import { RankUpAnimation } from '../components/ui/RankUpAnimation'
 
 const GENRE_ICONS = { fitness: '⚔️', running: '🏃', study: '📖' }
 
@@ -17,7 +16,6 @@ export function DashboardPage() {
   const [completing, setCompleting] = useState(null)
   const [justCompleted, setJustCompleted] = useState(null)
   const [rankUp, setRankUp] = useState(null) // { fromRank, toRank, genreName }
-  const [rankUp, setRankUp] = useState(null) // { fromRank, toRank }
 
   useEffect(() => { if (user) fetchAll() }, [user])
 

@@ -5,25 +5,22 @@ import { useAuthStore } from '../store/auth'
 import { RANK_COLORS } from '../lib/xp'
 import { ChevronLeft, Plus, Trash2, RefreshCw, Check, AlertTriangle } from 'lucide-react'
 
-const GENRE_ICONS = { fitness: '⚔️', running: '🏃', study: '📖' }
+const GENRE_ICONS = { fitness: '⚔️', running: '🏃' }
 const ALL_GENRES = [
   { slug: 'fitness', name: 'Fitness', icon: '⚔️', subPaths: [
-    { slug: 'bulk', name: 'Bulk', desc: 'Build maximum muscle mass' },
-    { slug: 'cut', name: 'Cut', desc: 'Lose fat, preserve muscle' },
-    { slug: 'endurance', name: 'Endurance', desc: 'Cardiovascular capacity' },
-    { slug: 'calisthenics', name: 'Calisthenics', desc: 'Bodyweight mastery' },
+    { slug: 'ppl', name: 'Push/Pull/Legs', desc: '3-day repeating cycle for balanced growth' },
+    { slug: 'bro-split', name: 'Bro Split', desc: '5-day focused muscle isolation' },
+    { slug: 'synergistic', name: 'Synergistic', desc: '4-day smart muscle pairing' },
+    { slug: 'muscular-endurance', name: 'Endurance', desc: 'High-rep full body circuits' },
+    { slug: 'power-explosiveness', name: 'Power', desc: 'Low reps, maximum explosive intent' },
+    { slug: 'cardio-focus', name: 'Cardio', desc: 'Structured heart rate zone training' },
   ]},
   { slug: 'running', name: 'Running', icon: '🏃', subPaths: [
     { slug: '5k', name: '5K', desc: 'Build up and improve your time' },
     { slug: '10k', name: '10K', desc: 'Train for 10K' },
     { slug: 'half-marathon', name: 'Half Marathon', desc: 'Conquer 21.1km' },
     { slug: 'marathon', name: 'Marathon', desc: 'The ultimate 42.2km test' },
-  ]},
-  { slug: 'study', name: 'Study', icon: '📖', subPaths: [
-    { slug: 'exam-prep', name: 'Exam Prep', desc: 'Systematic exam prep' },
-    { slug: 'language', name: 'Language', desc: 'Learn a new language' },
-    { slug: 'skill-building', name: 'Skill Building', desc: 'Master a professional skill' },
-  ]},
+  ]}
 ]
 
 function SectionLabel({ children }) {

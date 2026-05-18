@@ -5,7 +5,7 @@ import { getXPProgressInRank, getNextRank, RANK_COLORS, RANK_NAMES } from '../li
 import { CheckCircle2, Circle, Flame, Lock, ChevronDown, ChevronUp, Zap } from 'lucide-react'
 import { RankUpAnimation } from '../components/ui/RankUpAnimation'
 
-const GENRE_ICONS = { fitness: '⚔️', running: '🏃', study: '📖' }
+const GENRE_ICONS = { fitness: '⚔️', running: '🏃' }
 
 export function DashboardPage() {
   const { user } = useAuthStore()

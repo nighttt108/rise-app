@@ -7,10 +7,12 @@ import { ChevronLeft, Check } from 'lucide-react'
 const GENRES = [
   { slug: 'fitness', name: 'Fitness', icon: '⚔️', description: 'Build strength, physique and athletic performance', color: '#8b5cf6',
     subPaths: [
-      { slug: 'bulk', name: 'Bulk', desc: 'Build maximum muscle mass' },
-      { slug: 'cut', name: 'Cut', desc: 'Lose fat, preserve muscle' },
-      { slug: 'endurance', name: 'Endurance', desc: 'Cardiovascular capacity' },
-      { slug: 'calisthenics', name: 'Calisthenics', desc: 'Bodyweight mastery' },
+      { slug: 'ppl', name: 'Push/Pull/Legs', desc: '3-day repeating cycle for balanced growth' },
+      { slug: 'bro-split', name: 'Bro Split', desc: '5-day focused muscle isolation' },
+      { slug: 'synergistic', name: 'Synergistic', desc: '4-day smart muscle pairing' },
+      { slug: 'muscular-endurance', name: 'Endurance', desc: 'High-rep full body circuits' },
+      { slug: 'power-explosiveness', name: 'Power', desc: 'Low reps, maximum explosive intent' },
+      { slug: 'cardio-focus', name: 'Cardio', desc: 'Structured heart rate zone training' },
     ]},
   { slug: 'running', name: 'Running', icon: '🏃', description: 'From your first 5K to elite marathon times', color: '#14b8a6',
     subPaths: [
@@ -18,13 +20,7 @@ const GENRES = [
       { slug: '10k', name: '10K', desc: 'Train for the 10K distance' },
       { slug: 'half-marathon', name: 'Half Marathon', desc: 'Conquer 21.1km' },
       { slug: 'marathon', name: 'Marathon', desc: 'The ultimate 42.2km test' },
-    ]},
-  { slug: 'study', name: 'Study', icon: '📖', description: 'Master exams, languages and new skills', color: '#f59e0b',
-    subPaths: [
-      { slug: 'exam-prep', name: 'Exam Prep', desc: 'Systematic exam preparation' },
-      { slug: 'language', name: 'Language', desc: 'Learn a new language' },
-      { slug: 'skill-building', name: 'Skill Building', desc: 'Master a professional skill' },
-    ]},
+    ]}
 ]
 
 const PLACEMENT_QUESTIONS = {
@@ -37,11 +33,6 @@ const PLACEMENT_QUESTIONS = {
     { id: 'experience', question: 'Have you completed a 5K before?', options: ['Never run 5K', 'Yes, but slowly', 'Yes, under 30 min', 'Yes, under 22 min'], rankMap: [null, 'D', 'C', 'B'] },
     { id: 'weekly_km', question: 'How many km per week do you currently run?', options: ['Less than 10km', '10–25km', '25–50km', '50km+'], rankMap: [null, 'D', 'C', 'B'] },
     { id: 'races', question: 'Have you completed any official races?', options: ['No races', '1–2 races', '3–5 races', '5+ races'], rankMap: [null, 'D', 'C', 'B'] },
-  ],
-  study: [
-    { id: 'experience', question: 'What is your current level in this subject?', options: ['Complete beginner', 'Some basic knowledge', 'Intermediate', 'Advanced'], rankMap: [null, 'D', 'C', 'B'] },
-    { id: 'hours', question: 'How many hours per day can you dedicate?', options: ['Less than 30 min', '30 min–1 hour', '1–3 hours', '3+ hours'], rankMap: [null, null, 'D', 'C'] },
-    { id: 'results', question: 'Do you have any certifications or results to show?', options: ['None', 'Some informal learning', 'Certified beginner level', 'Mid-to-advanced certification'], rankMap: [null, null, 'C', 'B'] },
   ],
 }
 

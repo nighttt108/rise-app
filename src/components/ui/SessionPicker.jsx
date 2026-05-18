@@ -21,17 +21,17 @@ const SESSION_CONFIG = {
     { slug: 'legs', label: 'Legs', desc: 'Full lower body', color: '#22c55e' },
     { slug: 'shoulders-core', label: 'Shoulders & Core', desc: 'Overhead & stability', color: '#f59e0b' },
   ],
-  'endurance': [
+  'muscular-endurance': [
     { slug: 'circuit-a', label: 'Circuit A', desc: 'Full body stamina', color: '#14b8a6' },
     { slug: 'circuit-b', label: 'Circuit B', desc: 'Strength endurance', color: '#3b82f6' },
     { slug: 'circuit-c', label: 'Circuit C', desc: 'Metabolic conditioning', color: '#f59e0b' },
   ],
-  'power': [
+  'power-explosiveness': [
     { slug: 'lower-power', label: 'Lower Body Power', desc: 'Box jumps · Cleans · Sprints', color: '#ef4444' },
     { slug: 'upper-power', label: 'Upper Body Power', desc: 'Speed bench · Explosive pulls', color: '#8b5cf6' },
     { slug: 'full-power', label: 'Full Body Power', desc: 'KB snatches · Push press · Sprints', color: '#f59e0b' },
   ],
-  'cardio': [
+  'cardio-focus': [
     { slug: 'hiit', label: 'HIIT', desc: '30s sprint / 60s rest × 10–12', color: '#ef4444' },
     { slug: 'liss', label: 'LISS', desc: '45–60 min Zone 2 steady state', color: '#22c55e' },
     { slug: 'tempo', label: 'Tempo', desc: '30–40 min Zone 3–4 threshold', color: '#f59e0b' },

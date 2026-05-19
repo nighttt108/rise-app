@@ -48,19 +48,27 @@ export function SessionPicker({ progress, userId, onSessionPicked, onClose }) {
   async function pickSession(session) {
     setSelecting(session.slug)
     const today = new Date().toISOString().split('T')[0]
-    const todayStart = new Date(today + 'T00:00:00.000Z').toISOString()
 
     try {
-      // If already picked a session today, expire those quests first
-      if (todaySession && todaySession !== session.slug) {
+      // Expire ALL active daily session quests for this sub-path
+      // This handles both wrong-slug and no-slug cases
+      const { data: allSessionTemplates } = await supabase
+        .from('quest_templates')
+        .select('id')
+        .eq('sub_path_id', progress.sub_path_id)
+        .not('session_slug', 'is', null)
+        .eq('frequency', 'daily')
+
+      if (allSessionTemplates?.length) {
         await supabase
           .from('user_quests')
           .update({ status: 'expired' })
           .eq('user_id', userId)
-          .eq('session_slug', todaySession)
+          .in('quest_template_id', allSessionTemplates.map(t => t.id))
+          .eq('status', 'active')
       }
 
-      // Get quest templates for this session
+      // Get templates for the picked session only
       const { data: templates, error: tErr } = await supabase
         .from('quest_templates')
         .select('id')
@@ -68,18 +76,10 @@ export function SessionPicker({ progress, userId, onSessionPicked, onClose }) {
         .eq('session_slug', session.slug)
         .eq('is_active', true)
 
-      if (tErr) { console.error('Template fetch error:', tErr); setSelecting(null); return }
-      if (!templates?.length) { console.warn('No templates found for session:', session.slug); setSelecting(null); return }
+      if (tErr) { console.error('Template error:', tErr); setSelecting(null); return }
+      if (!templates?.length) { console.warn('No templates for session:', session.slug, 'sub_path:', progress.sub_path_id); setSelecting(null); return }
 
-      // Expire any existing active quests for this session slug
-      await supabase
-        .from('user_quests')
-        .update({ status: 'expired' })
-        .eq('user_id', userId)
-        .in('quest_template_id', templates.map(t => t.id))
-        .eq('status', 'active')
-
-      // Insert fresh quests for this session
+      // Insert fresh quests for this session only
       const endOfDay = new Date()
       endOfDay.setHours(23, 59, 59, 999)
 
@@ -94,9 +94,9 @@ export function SessionPicker({ progress, userId, onSessionPicked, onClose }) {
         }))
       )
 
-      if (insertErr) { console.error('Quest insert error:', insertErr); setSelecting(null); return }
+      if (insertErr) { console.error('Insert error:', insertErr); setSelecting(null); return }
 
-      // Update progress with last session
+      // Update progress with today's session
       await supabase
         .from('user_genre_progress')
         .update({ last_session_slug: session.slug, last_session_date: today })

@@ -33,7 +33,6 @@ export function DashboardPage() {
       .select('*, quest_templates(title, description, quest_type, frequency, base_xp, proof_type, sub_path_id, session_slug)')
       .eq('user_id', user.id)
       .in('status', ['active', 'completed'])
-      .gte('assigned_at', new Date().toISOString().split('T')[0])
 
     if (prog) {
       setProgress(prog)

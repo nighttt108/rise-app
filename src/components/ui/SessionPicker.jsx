@@ -48,60 +48,68 @@ export function SessionPicker({ progress, userId, onSessionPicked, onClose }) {
   async function pickSession(session) {
     setSelecting(session.slug)
     const today = new Date().toISOString().split('T')[0]
+    const todayStart = new Date(today + 'T00:00:00.000Z').toISOString()
 
-    // If already picked a session today, expire those quests first
-    if (todaySession && todaySession !== session.slug) {
+    try {
+      // If already picked a session today, expire those quests first
+      if (todaySession && todaySession !== session.slug) {
+        await supabase
+          .from('user_quests')
+          .update({ status: 'expired' })
+          .eq('user_id', userId)
+          .eq('session_slug', todaySession)
+      }
+
+      // Get quest templates for this session
+      const { data: templates, error: tErr } = await supabase
+        .from('quest_templates')
+        .select('id')
+        .eq('sub_path_id', progress.sub_path_id)
+        .eq('session_slug', session.slug)
+        .eq('is_active', true)
+
+      if (tErr) { console.error('Template fetch error:', tErr); setSelecting(null); return }
+      if (!templates?.length) { console.warn('No templates found for session:', session.slug); setSelecting(null); return }
+
+      // Expire any existing active quests for this session slug
       await supabase
         .from('user_quests')
         .update({ status: 'expired' })
         .eq('user_id', userId)
-        .eq('session_slug', todaySession)
-        .gte('assigned_at', today)
-    }
-
-    // Get quest templates for this session
-    const { data: templates } = await supabase
-      .from('quest_templates')
-      .select('id')
-      .eq('sub_path_id', progress.sub_path_id)
-      .eq('session_slug', session.slug)
-      .eq('is_active', true)
-
-    if (templates?.length) {
-      // Check which ones aren't already assigned today
-      const { data: existing } = await supabase
-        .from('user_quests')
-        .select('quest_template_id')
-        .eq('user_id', userId)
         .in('quest_template_id', templates.map(t => t.id))
-        .in('status', ['active', 'completed'])
+        .eq('status', 'active')
 
-      const existingIds = new Set(existing?.map(e => e.quest_template_id) || [])
-      const toInsert = templates.filter(t => !existingIds.has(t.id))
+      // Insert fresh quests for this session
+      const endOfDay = new Date()
+      endOfDay.setHours(23, 59, 59, 999)
 
-      if (toInsert.length > 0) {
-        await supabase.from('user_quests').insert(
-          toInsert.map(t => ({
-            user_id: userId,
-            quest_template_id: t.id,
-            session_slug: session.slug,
-            status: 'active',
-            assigned_at: new Date().toISOString(),
-            expires_at: new Date(new Date().setHours(23,59,59,999)).toISOString(),
-          }))
-        )
-      }
+      const { error: insertErr } = await supabase.from('user_quests').insert(
+        templates.map(t => ({
+          user_id: userId,
+          quest_template_id: t.id,
+          session_slug: session.slug,
+          status: 'active',
+          assigned_at: new Date().toISOString(),
+          expires_at: endOfDay.toISOString(),
+        }))
+      )
+
+      if (insertErr) { console.error('Quest insert error:', insertErr); setSelecting(null); return }
+
+      // Update progress with last session
+      await supabase
+        .from('user_genre_progress')
+        .update({ last_session_slug: session.slug, last_session_date: today })
+        .eq('id', progress.id)
+
+      setTodaySession(session.slug)
+      setSelecting(null)
+      onSessionPicked(session)
+
+    } catch (err) {
+      console.error('Session pick error:', err)
+      setSelecting(null)
     }
-
-    // Update progress with last session
-    await supabase
-      .from('user_genre_progress')
-      .update({ last_session_slug: session.slug, last_session_date: today })
-      .eq('id', progress.id)
-
-    setTodaySession(session.slug)
-    setSelecting(null)
-    onSessionPicked(session)
   }
 
   if (!sessions.length) return null

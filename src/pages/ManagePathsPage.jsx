@@ -4,29 +4,34 @@ import { supabase } from '../lib/supabase'
 import { useAuthStore } from '../store/auth'
 import { RANK_COLORS } from '../lib/xp'
 import { ChevronLeft, Plus, Trash2, RefreshCw, Check, AlertTriangle } from 'lucide-react'
-
-const GENRE_ICONS = { fitness: '⚔️', running: '🏃' }
+ 
+const GENRE_ICONS = { fitness: '⚔️', running: '🏃', study: '📖' }
 const ALL_GENRES = [
   { slug: 'fitness', name: 'Fitness', icon: '⚔️', subPaths: [
-    { slug: 'ppl', name: 'Push/Pull/Legs', desc: '3-day repeating cycle for balanced growth' },
-    { slug: 'bro-split', name: 'Bro Split', desc: '5-day focused muscle isolation' },
-    { slug: 'synergistic', name: 'Synergistic', desc: '4-day smart muscle pairing' },
-    { slug: 'muscular-endurance', name: 'Endurance', desc: 'High-rep full body circuits' },
-    { slug: 'power-explosiveness', name: 'Power', desc: 'Low reps, maximum explosive intent' },
-    { slug: 'cardio-focus', name: 'Cardio', desc: 'Structured heart rate zone training' },
-  ]},
+  { slug: 'ppl', name: 'Push / Pull / Legs', desc: '3–6 days/week · balanced development' },
+  { slug: 'bro-split', name: 'Classic Bro Split', desc: '5 days · one muscle per day · max volume' },
+  { slug: 'synergistic', name: 'Synergistic Split', desc: '4 days · smart muscle pairing' },
+  { slug: 'endurance', name: 'Muscular Endurance', desc: '3 circuit days · stamina and work capacity' },
+  { slug: 'power', name: 'Power & Explosiveness', desc: '3 days · athletic power and speed' },
+  { slug: 'cardio', name: 'Cardio Focus', desc: '5 days · HIIT, LISS, tempo · fat loss' },
+]},
   { slug: 'running', name: 'Running', icon: '🏃', subPaths: [
     { slug: '5k', name: '5K', desc: 'Build up and improve your time' },
     { slug: '10k', name: '10K', desc: 'Train for 10K' },
     { slug: 'half-marathon', name: 'Half Marathon', desc: 'Conquer 21.1km' },
     { slug: 'marathon', name: 'Marathon', desc: 'The ultimate 42.2km test' },
-  ]}
+  ]},
+  { slug: 'study', name: 'Study', icon: '📖', subPaths: [
+    { slug: 'exam-prep', name: 'Exam Prep', desc: 'Systematic exam prep' },
+    { slug: 'language', name: 'Language', desc: 'Learn a new language' },
+    { slug: 'skill-building', name: 'Skill Building', desc: 'Master a professional skill' },
+  ]},
 ]
-
+ 
 function SectionLabel({ children }) {
   return <div style={{ fontFamily: 'var(--font-display)', fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.2em', marginBottom: '10px' }}>{children}</div>
 }
-
+ 
 function Modal({ children, onClose }) {
   return (
     <div onClick={e => e.target === e.currentTarget && onClose()} style={{ position: 'fixed', inset: 0, zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}>
@@ -36,7 +41,7 @@ function Modal({ children, onClose }) {
     </div>
   )
 }
-
+ 
 function ModalBtn({ children, onClick, disabled, secondary, danger }) {
   return (
     <button onClick={onClick} disabled={disabled} style={{ flex: secondary ? 0 : 1, padding: '12px 20px', background: danger ? 'rgba(239,68,68,0.15)' : secondary ? 'transparent' : 'var(--accent-purple)', border: `1px solid ${danger ? 'rgba(239,68,68,0.4)' : secondary ? 'var(--border-dim)' : 'transparent'}`, borderRadius: '10px', cursor: disabled ? 'not-allowed' : 'pointer', color: danger ? '#f87171' : secondary ? 'var(--text-secondary)' : '#fff', fontSize: '13px', fontWeight: 700, fontFamily: 'var(--font-display)', letterSpacing: '0.05em', opacity: disabled ? 0.5 : 1 }}>
@@ -44,7 +49,7 @@ function ModalBtn({ children, onClick, disabled, secondary, danger }) {
     </button>
   )
 }
-
+ 
 export function ManagePathsPage() {
   const { user } = useAuthStore()
   const navigate = useNavigate()
@@ -57,9 +62,9 @@ export function ManagePathsPage() {
   const [selectedSubPath, setSelectedSubPath] = useState(null)
   const [selectedGenre, setSelectedGenre] = useState(null)
   const [toast, setToast] = useState(null)
-
+ 
   useEffect(() => { fetchAll() }, [])
-
+ 
   async function fetchAll() {
     setLoading(true)
     const [{ data: prog }, { data: g }, { data: sp }] = await Promise.all([
@@ -72,12 +77,12 @@ export function ManagePathsPage() {
     if (sp) setSubPaths(sp)
     setLoading(false)
   }
-
+ 
   function showToast(msg, color = 'var(--accent-purple)') {
     setToast({ msg, color })
     setTimeout(() => setToast(null), 2500)
   }
-
+ 
   async function handleSwitchSubPath() {
     if (!selectedSubPath || !modal?.data?.genreId) return
     setSaving(true)
@@ -86,7 +91,7 @@ export function ManagePathsPage() {
     if (!error) { showToast('Path switched! New quests assigned.'); fetchAll() }
     else showToast('Something went wrong', '#ef4444')
   }
-
+ 
   async function handleDropGenre() {
     if (!modal?.data?.genreId) return
     setSaving(true)
@@ -95,7 +100,7 @@ export function ManagePathsPage() {
     if (!error) { showToast('Genre dropped. XP drains after 7 days.', '#f59e0b'); fetchAll() }
     else showToast('Something went wrong', '#ef4444')
   }
-
+ 
   async function handleRejoin(genreId, subPathId, rank) {
     setSaving(true)
     const { error } = await supabase.rpc('add_genre', { p_user_id: user.id, p_genre_id: genreId, p_sub_path_id: subPathId, p_start_rank: rank })
@@ -103,7 +108,7 @@ export function ManagePathsPage() {
     if (!error) { showToast('Welcome back! Drain stopped.', '#22c55e'); fetchAll() }
     else showToast('Something went wrong', '#ef4444')
   }
-
+ 
   async function handleAddGenre() {
     if (!selectedGenre || !selectedSubPath) return
     setSaving(true)
@@ -113,18 +118,18 @@ export function ManagePathsPage() {
     if (!error) { showToast('New genre added!'); fetchAll() }
     else showToast('Something went wrong', '#ef4444')
   }
-
+ 
   const activeProgress = progress.filter(p => p.is_active !== false)
   const droppedProgress = progress.filter(p => p.is_active === false)
   const activeGenreSlugs = progress.map(p => p.genres?.slug)
   const availableToAdd = ALL_GENRES.filter(g => !activeGenreSlugs.includes(g.slug))
-
+ 
   if (loading) return <div style={{ padding: '20px' }}>{[1,2].map(i => <div key={i} style={{ height: '100px', background: 'var(--bg-surface)', borderRadius: '14px', marginBottom: '10px' }} className="shimmer" />)}</div>
-
+ 
   return (
     <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto', paddingBottom: '40px' }}>
       {toast && <div style={{ position: 'fixed', top: '72px', left: '50%', transform: 'translateX(-50%)', background: toast.color, color: '#fff', padding: '10px 20px', borderRadius: '40px', fontSize: '13px', fontWeight: 600, fontFamily: 'var(--font-display)', zIndex: 100, whiteSpace: 'nowrap', animation: 'fadeUp 0.3s ease' }}>{toast.msg}</div>}
-
+ 
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
         <button onClick={() => navigate('/profile')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', display: 'flex' }}><ChevronLeft size={22} /></button>
         <div>
@@ -132,7 +137,7 @@ export function ManagePathsPage() {
           <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Switch paths, add genres, or drop and rejoin</div>
         </div>
       </div>
-
+ 
       <SectionLabel>ACTIVE PATHS</SectionLabel>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
         {activeProgress.map(p => {
@@ -161,7 +166,7 @@ export function ManagePathsPage() {
           )
         })}
       </div>
-
+ 
       {droppedProgress.length > 0 && (
         <>
           <SectionLabel>DROPPED PATHS</SectionLabel>
@@ -192,7 +197,7 @@ export function ManagePathsPage() {
           </div>
         </>
       )}
-
+ 
       {availableToAdd.length > 0 && (
         <>
           <SectionLabel>ADD A NEW PATH</SectionLabel>
@@ -211,7 +216,7 @@ export function ManagePathsPage() {
           </div>
         </>
       )}
-
+ 
       {/* Switch modal */}
       {modal?.type === 'switch' && (
         <Modal onClose={() => setModal(null)}>
@@ -240,7 +245,7 @@ export function ManagePathsPage() {
           </div>
         </Modal>
       )}
-
+ 
       {/* Drop modal */}
       {modal?.type === 'drop' && (
         <Modal onClose={() => setModal(null)}>
@@ -257,7 +262,7 @@ export function ManagePathsPage() {
           </div>
         </Modal>
       )}
-
+ 
       {/* Add genre modal */}
       {modal?.type === 'add' && (
         <Modal onClose={() => setModal(null)}>

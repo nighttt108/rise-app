@@ -5,29 +5,37 @@ import { useAuthStore } from '../store/auth'
 import { ChevronLeft, Check } from 'lucide-react'
 
 const GENRES = [
-  { slug: 'fitness', name: 'Fitness', icon: '⚔️', description: 'Build strength, physique and athletic performance', color: '#8b5cf6',
+  {
+    slug: 'fitness', name: 'Fitness', icon: '⚔️',
+    description: 'Gym-based training — build muscle, power, endurance or shred fat',
+    color: '#8b5cf6',
     subPaths: [
-      { slug: 'ppl', name: 'Push/Pull/Legs', desc: '3-day repeating cycle for balanced growth' },
-      { slug: 'bro-split', name: 'Bro Split', desc: '5-day focused muscle isolation' },
-      { slug: 'synergistic', name: 'Synergistic', desc: '4-day smart muscle pairing' },
-      { slug: 'muscular-endurance', name: 'Endurance', desc: 'High-rep full body circuits' },
-      { slug: 'power-explosiveness', name: 'Power', desc: 'Low reps, maximum explosive intent' },
-      { slug: 'cardio-focus', name: 'Cardio', desc: 'Structured heart rate zone training' },
-    ]},
-  { slug: 'running', name: 'Running', icon: '🏃', description: 'From your first 5K to elite marathon times', color: '#14b8a6',
+      { slug: 'ppl', name: 'Push / Pull / Legs', desc: 'Most popular split · 3–6 days/week · balanced development' },
+      { slug: 'bro-split', name: 'Classic Bro Split', desc: '5 days · one muscle group per day · maximum volume' },
+      { slug: 'synergistic', name: 'Synergistic Split', desc: '4 days · smart muscle pairing · best recovery efficiency' },
+      { slug: 'endurance', name: 'Muscular Endurance', desc: '3 circuit days · high reps · builds stamina and work capacity' },
+      { slug: 'power', name: 'Power & Explosiveness', desc: '3 days · low reps · maximum speed · athletic performance' },
+      { slug: 'cardio', name: 'Cardio Focus', desc: '5 days · HIIT, LISS, tempo · fat loss and cardiovascular health' },
+    ]
+  },
+  {
+    slug: 'running', name: 'Running', icon: '🏃',
+    description: 'From your first 5K to elite marathon times',
+    color: '#14b8a6',
     subPaths: [
       { slug: '5k', name: '5K', desc: 'Build up and improve your time' },
       { slug: '10k', name: '10K', desc: 'Train for the 10K distance' },
       { slug: 'half-marathon', name: 'Half Marathon', desc: 'Conquer 21.1km' },
       { slug: 'marathon', name: 'Marathon', desc: 'The ultimate 42.2km test' },
-    ]}
+    ]
+  },
 ]
 
 const PLACEMENT_QUESTIONS = {
   fitness: [
-    { id: 'experience', question: 'How long have you been training consistently?', options: ['Less than 3 months', '3–12 months', '1–3 years', '3+ years'], rankMap: [null, 'D', 'C', 'B'] },
-    { id: 'frequency', question: 'How many days per week do you train?', options: ['1–2 days', '3–4 days', '5–6 days', 'Every day'], rankMap: [null, null, 'D', 'C'] },
-    { id: 'level', question: 'How would you honestly rate your current level?', options: ['Complete beginner', 'I know the basics', 'Intermediate — solid routine', 'Advanced — competitive level'], rankMap: [null, 'D', 'C', 'B'] },
+    { id: 'experience', question: 'How long have you been training at a gym consistently?', options: ['Less than 3 months', '3–12 months', '1–3 years', '3+ years'], rankMap: [null, 'D', 'C', 'B'] },
+    { id: 'frequency', question: 'How many days per week do you currently train?', options: ['1–2 days', '3–4 days', '5–6 days', 'Every day'], rankMap: [null, null, 'D', 'C'] },
+    { id: 'level', question: 'How would you honestly rate your current strength level?', options: ['Complete beginner', 'I know the basics', 'Intermediate — solid lifts', 'Advanced — competitive level'], rankMap: [null, 'D', 'C', 'B'] },
   ],
   running: [
     { id: 'experience', question: 'Have you completed a 5K before?', options: ['Never run 5K', 'Yes, but slowly', 'Yes, under 30 min', 'Yes, under 22 min'], rankMap: [null, 'D', 'C', 'B'] },
@@ -53,21 +61,21 @@ function determinePlacementRank(answers, questions) {
 
 function StepHeader({ title, subtitle, step, color }) {
   return (
-    <div style={{ textAlign: 'center', maxWidth: '480px', marginBottom: '32px' }}>
-      <div style={{ fontSize: '11px', fontFamily: 'var(--font-display)', fontWeight: 600, color: color || 'var(--accent-purple)', letterSpacing: '0.2em', marginBottom: '12px', opacity: 0.8 }}>{step}</div>
-      <div style={{ fontFamily: 'var(--font-display)', fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '0.08em', marginBottom: '10px' }}>{title}</div>
-      <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{subtitle}</p>
+    <div style={{ textAlign: 'center', maxWidth: '520px', marginBottom: '28px' }}>
+      <div style={{ fontSize: '11px', fontFamily: 'var(--font-display)', fontWeight: 600, color: color || 'var(--accent-purple)', letterSpacing: '0.2em', marginBottom: '10px', opacity: 0.8 }}>{step}</div>
+      <div style={{ fontFamily: 'var(--font-display)', fontSize: '24px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '0.06em', marginBottom: '8px' }}>{title}</div>
+      <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{subtitle}</p>
     </div>
   )
 }
 
 function NavButtons({ onBack, onNext, nextDisabled, nextLabel }) {
   return (
-    <div style={{ display: 'flex', gap: '12px', width: '100%', maxWidth: '480px' }}>
-      <button onClick={onBack} style={{ padding: '13px 20px', background: 'var(--bg-surface)', border: '1px solid var(--border-dim)', borderRadius: '10px', cursor: 'pointer', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px' }}>
+    <div style={{ display: 'flex', gap: '12px', width: '100%', maxWidth: '520px' }}>
+      <button onClick={onBack} style={{ padding: '12px 20px', background: 'var(--bg-surface)', border: '1px solid var(--border-dim)', borderRadius: '10px', cursor: 'pointer', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px' }}>
         <ChevronLeft size={16} /> Back
       </button>
-      <button onClick={onNext} disabled={nextDisabled} style={{ flex: 1, padding: '13px', background: nextDisabled ? 'var(--bg-elevated)' : 'var(--accent-purple)', border: 'none', borderRadius: '10px', cursor: nextDisabled ? 'not-allowed' : 'pointer', color: nextDisabled ? 'var(--text-dim)' : '#fff', fontSize: '14px', fontWeight: 700, fontFamily: 'var(--font-display)', letterSpacing: '0.1em', boxShadow: nextDisabled ? 'none' : '0 0 20px rgba(139,92,246,0.3)', transition: 'all 0.2s' }}>{nextLabel}</button>
+      <button onClick={onNext} disabled={nextDisabled} style={{ flex: 1, padding: '12px', background: nextDisabled ? 'var(--bg-elevated)' : 'var(--accent-purple)', border: 'none', borderRadius: '10px', cursor: nextDisabled ? 'not-allowed' : 'pointer', color: nextDisabled ? 'var(--text-dim)' : '#fff', fontSize: '14px', fontWeight: 700, fontFamily: 'var(--font-display)', letterSpacing: '0.1em', boxShadow: nextDisabled ? 'none' : '0 0 20px rgba(139,92,246,0.3)', transition: 'all 0.2s' }}>{nextLabel}</button>
     </div>
   )
 }
@@ -103,16 +111,31 @@ export function OnboardingPage() {
         const genre = genres.find(g => g.slug === gs)
         const spSlug = subPathSelections[gs]
         const subPath = subPaths.find(sp => sp.slug === spSlug && sp.genre_id === genre.id)
-        const rank = determinePlacementRank(placementAnswers[gs] || {}, PLACEMENT_QUESTIONS[gs])
+        const questions = PLACEMENT_QUESTIONS[gs]
+        const rank = questions ? determinePlacementRank(placementAnswers[gs] || {}, questions) : 'E'
         return { user_id: user.id, genre_id: genre.id, sub_path_id: subPath.id, current_rank: rank, placed_via: rank === 'E' ? 'grind' : 'placement', total_xp: 0, current_rank_xp: 0 }
       })
       await supabase.from('user_genre_progress').insert(insertRows)
+
+      // Assign non-session quests (protein + weekly + gate)
       for (const gs of selectedGenres) {
         const genre = genres.find(g => g.slug === gs)
         const subPath = subPaths.find(sp => sp.slug === subPathSelections[gs] && sp.genre_id === genre.id)
-        const { data: templates } = await supabase.from('quest_templates').select('id').eq('sub_path_id', subPath.id).eq('frequency', 'daily').eq('is_active', true).limit(3)
+        const { data: templates } = await supabase
+          .from('quest_templates')
+          .select('id, frequency')
+          .eq('sub_path_id', subPath.id)
+          .is('session_slug', null)
+          .eq('is_active', true)
         if (templates?.length) {
-          await supabase.from('user_quests').insert(templates.map(t => ({ user_id: user.id, quest_template_id: t.id, status: 'active', expires_at: new Date(new Date().setHours(23,59,59,999)).toISOString() })))
+          await supabase.from('user_quests').insert(templates.map(t => ({
+            user_id: user.id, quest_template_id: t.id, status: 'active',
+            expires_at: t.frequency === 'daily'
+              ? new Date(new Date().setHours(23,59,59,999)).toISOString()
+              : t.frequency === 'weekly'
+              ? new Date(new Date(Date.now() + 7*86400000).setHours(23,59,59,999)).toISOString()
+              : new Date(Date.now() + 365*86400000).toISOString()
+          })))
         }
       }
       navigate('/dashboard')
@@ -136,8 +159,8 @@ export function OnboardingPage() {
   // GENRE SELECT
   if (step === 1) return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-void)', padding: '48px 24px 32px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <StepHeader title="CHOOSE YOUR PATHS" subtitle="Select one or more genres to pursue. Each is tracked independently." step="Step 1 of 3" />
-      <div style={{ width: '100%', maxWidth: '480px', display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
+      <StepHeader title="CHOOSE YOUR PATHS" subtitle="Select the genres you want to pursue. Each is tracked independently with its own rank and quests." step="Step 1 of 3" />
+      <div style={{ width: '100%', maxWidth: '520px', display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
         {GENRES.map(genre => {
           const isSel = selectedGenres.includes(genre.slug)
           return (
@@ -163,15 +186,22 @@ export function OnboardingPage() {
   // SUB-PATH
   if (step === 2 && genreData) return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-void)', padding: '48px 24px 32px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <StepHeader title={`${genreData.icon} ${genreData.name.toUpperCase()}`} subtitle="Choose your training path. This determines the quests you receive." step={`Genre ${currentGenreIdx + 1} of ${selectedGenres.length} · Step 2 of 3`} color={genreData.color} />
-      <div style={{ width: '100%', maxWidth: '480px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '32px' }}>
+      <StepHeader
+        title={`${genreData.icon} ${genreData.name.toUpperCase()}`}
+        subtitle={genreData.slug === 'fitness' ? 'Choose your training split. This determines the exact exercises you get each day.' : 'Choose your target distance. Your quests will build toward this goal.'}
+        step={`Genre ${currentGenreIdx + 1} of ${selectedGenres.length} · Step 2 of 3`}
+        color={genreData.color}
+      />
+      <div style={{ width: '100%', maxWidth: '520px', display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '28px' }}>
         {genreData.subPaths.map(sp => {
           const isSel = subPathSelections[currentGenreSlug] === sp.slug
           return (
-            <button key={sp.slug} onClick={() => setSubPath(currentGenreSlug, sp.slug)} style={{ padding: '20px 16px', textAlign: 'left', background: isSel ? `${genreData.color}18` : 'var(--bg-surface)', border: `1px solid ${isSel ? genreData.color : 'var(--border-dim)'}`, borderRadius: '14px', cursor: 'pointer', transition: 'all 0.2s', boxShadow: isSel ? `0 0 16px ${genreData.color}25` : 'none' }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontSize: '17px', fontWeight: 700, color: isSel ? genreData.color : 'var(--text-primary)', marginBottom: '6px' }}>{sp.name}</div>
-              <div style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>{sp.desc}</div>
-              {isSel && <div style={{ marginTop: '10px', width: '20px', height: '20px', borderRadius: '50%', background: genreData.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Check size={12} color="#fff" /></div>}
+            <button key={sp.slug} onClick={() => setSubPath(currentGenreSlug, sp.slug)} style={{ padding: '16px', textAlign: 'left', background: isSel ? `${genreData.color}18` : 'var(--bg-surface)', border: `1px solid ${isSel ? genreData.color : 'var(--border-dim)'}`, borderRadius: '12px', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '14px' }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: '15px', fontWeight: 700, color: isSel ? genreData.color : 'var(--text-primary)', marginBottom: '3px' }}>{sp.name}</div>
+                <div style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>{sp.desc}</div>
+              </div>
+              {isSel && <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: genreData.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Check size={13} color="#fff" /></div>}
             </button>
           )
         })}
@@ -184,27 +214,31 @@ export function OnboardingPage() {
   if (step === 3 && genreData) {
     const questions = PLACEMENT_QUESTIONS[currentGenreSlug]
     const answers = placementAnswers[currentGenreSlug] || {}
-    const allAnswered = questions.every(q => answers[q.id] !== undefined)
-    const placedRank = allAnswered ? determinePlacementRank(answers, questions) : null
+    const allAnswered = questions ? questions.every(q => answers[q.id] !== undefined) : true
+    const placedRank = allAnswered && questions ? determinePlacementRank(answers, questions) : 'E'
+
     return (
       <div style={{ minHeight: '100vh', background: 'var(--bg-void)', padding: '48px 24px 32px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <StepHeader title="PLACEMENT TEST" subtitle={`Answer honestly — this sets your starting rank in ${genreData.name}.`} step={`Genre ${currentGenreIdx + 1} of ${selectedGenres.length} · Step 3 of 3`} color={genreData.color} />
-        <div style={{ width: '100%', maxWidth: '480px', display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '24px' }}>
-          {questions.map((q, qi) => (
-            <div key={q.id} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-dim)', borderRadius: '14px', padding: '20px' }}>
-              <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', fontFamily: 'var(--font-display)', letterSpacing: '0.05em', marginBottom: '8px' }}>Q{qi + 1}</div>
-              <div style={{ fontSize: '15px', color: 'var(--text-primary)', fontWeight: 500, marginBottom: '14px', lineHeight: 1.5 }}>{q.question}</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {q.options.map((opt, oi) => {
-                  const isSel = answers[q.id] === oi
-                  return <button key={oi} onClick={() => setAnswer(currentGenreSlug, q.id, oi)} style={{ padding: '10px 14px', textAlign: 'left', background: isSel ? `${genreData.color}18` : 'var(--bg-deep)', border: `1px solid ${isSel ? genreData.color : 'var(--border-dim)'}`, borderRadius: '8px', cursor: 'pointer', transition: 'all 0.15s', fontSize: '13px', color: isSel ? genreData.color : 'var(--text-secondary)', fontWeight: isSel ? 600 : 400 }}>{opt}</button>
-                })}
+        {questions ? (
+          <div style={{ width: '100%', maxWidth: '520px', display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '20px' }}>
+            {questions.map((q, qi) => (
+              <div key={q.id} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-dim)', borderRadius: '14px', padding: '18px' }}>
+                <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', fontFamily: 'var(--font-display)', letterSpacing: '0.05em', marginBottom: '8px' }}>Q{qi + 1}</div>
+                <div style={{ fontSize: '15px', color: 'var(--text-primary)', fontWeight: 500, marginBottom: '14px', lineHeight: 1.5 }}>{q.question}</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {q.options.map((opt, oi) => {
+                    const isSel = answers[q.id] === oi
+                    return <button key={oi} onClick={() => setAnswer(currentGenreSlug, q.id, oi)} style={{ padding: '10px 14px', textAlign: 'left', background: isSel ? `${genreData.color}18` : 'var(--bg-deep)', border: `1px solid ${isSel ? genreData.color : 'var(--border-dim)'}`, borderRadius: '8px', cursor: 'pointer', transition: 'all 0.15s', fontSize: '13px', color: isSel ? genreData.color : 'var(--text-secondary)', fontWeight: isSel ? 600 : 400 }}>{opt}</button>
+                  })}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-        {placedRank && (
-          <div style={{ width: '100%', maxWidth: '480px', marginBottom: '24px', padding: '16px 20px', background: `${RANK_COLORS[placedRank]}12`, border: `1px solid ${RANK_COLORS[placedRank]}40`, borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '14px' }}>
+            ))}
+          </div>
+        ) : null}
+
+        {allAnswered && (
+          <div style={{ width: '100%', maxWidth: '520px', marginBottom: '20px', padding: '14px 18px', background: `${RANK_COLORS[placedRank]}12`, border: `1px solid ${RANK_COLORS[placedRank]}40`, borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '14px' }}>
             <div style={{ width: '44px', height: '44px', borderRadius: '8px', border: `2px solid ${RANK_COLORS[placedRank]}`, background: `${RANK_COLORS[placedRank]}20`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-display)', fontSize: '20px', fontWeight: 700, color: RANK_COLORS[placedRank], flexShrink: 0 }}>{placedRank}</div>
             <div>
               <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '2px' }}>Your starting rank</div>
@@ -221,23 +255,24 @@ export function OnboardingPage() {
   if (step === 4) return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-void)', padding: '48px 24px 32px', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundImage: 'radial-gradient(ellipse at 50% 0%, rgba(139,92,246,0.08) 0%, transparent 60%)' }}>
       <StepHeader title="YOUR HUNTER PROFILE" subtitle="Review your setup. Your quests will be assigned on entry." step="Ready to begin" />
-      <div style={{ width: '100%', maxWidth: '480px', display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '40px' }}>
+      <div style={{ width: '100%', maxWidth: '520px', display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '40px' }}>
         {selectedGenres.map(gs => {
           const genre = GENRES.find(g => g.slug === gs)
           const subPath = genre.subPaths.find(sp => sp.slug === subPathSelections[gs])
-          const rank = determinePlacementRank(placementAnswers[gs] || {}, PLACEMENT_QUESTIONS[gs])
+          const questions = PLACEMENT_QUESTIONS[gs]
+          const rank = questions ? determinePlacementRank(placementAnswers[gs] || {}, questions) : 'E'
           return (
-            <div key={gs} style={{ background: 'var(--bg-surface)', border: `1px solid ${genre.color}40`, borderRadius: '14px', padding: '20px', boxShadow: `0 0 20px ${genre.color}10` }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                <span style={{ fontSize: '28px' }}>{genre.icon}</span>
+            <div key={gs} style={{ background: 'var(--bg-surface)', border: `1px solid ${genre.color}40`, borderRadius: '14px', padding: '18px', boxShadow: `0 0 20px ${genre.color}10` }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
+                <span style={{ fontSize: '26px' }}>{genre.icon}</span>
                 <div>
-                  <div style={{ fontFamily: 'var(--font-display)', fontSize: '17px', fontWeight: 700, color: genre.color }}>{genre.name}</div>
-                  <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{subPath?.name} path</div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontSize: '16px', fontWeight: 700, color: genre.color }}>{genre.name}</div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{subPath?.name}</div>
                 </div>
                 <div style={{ marginLeft: 'auto', width: '40px', height: '40px', borderRadius: '8px', border: `2px solid ${RANK_COLORS[rank]}`, background: `${RANK_COLORS[rank]}20`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-display)', fontSize: '18px', fontWeight: 700, color: RANK_COLORS[rank] }}>{rank}</div>
               </div>
               <div style={{ padding: '8px 12px', background: 'var(--bg-deep)', borderRadius: '8px', fontSize: '12px', color: 'var(--text-secondary)' }}>
-                Starting at <strong style={{ color: RANK_COLORS[rank] }}>Rank {rank}</strong> — daily quests assigned on entry
+                Starting at <strong style={{ color: RANK_COLORS[rank] }}>Rank {rank}</strong> — quests assigned on entry
               </div>
             </div>
           )

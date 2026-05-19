@@ -238,14 +238,21 @@ export function DashboardPage() {
         const color = RANK_COLORS[p.current_rank]
         const isFitness = p.genres?.slug === 'fitness'
         const genreQuests = getGenreQuests(p.sub_path_id)
-        const dailies = genreQuests.filter(q => q.quest_templates?.frequency === 'daily')
+        const todaySessionSlug = p.last_session_date === today ? p.last_session_slug : null
+        const dailies = genreQuests.filter(q => {
+          if (q.quest_templates?.frequency !== 'daily') return false
+          const qSession = q.quest_templates?.session_slug
+          // Always show null session quests (protein etc)
+          if (!qSession) return true
+          // Only show today's picked session quests
+          return qSession === todaySessionSlug
+        })
         const weeklies = genreQuests.filter(q => q.quest_templates?.frequency === 'hard')
         const gates = genreQuests.filter(q => q.quest_templates?.frequency === 'one_time')
         const completedDailies = dailies.filter(q => q.status === 'completed').length
         const allDailyDone = dailies.length > 0 && completedDailies === dailies.length
         const { current, needed, pct } = getXPProgressInRank(p.total_xp, p.current_rank)
         const nextRank = getNextRank(p.current_rank)
-        const todaySessionSlug = p.last_session_date === today ? p.last_session_slug : null
 
         return (
           <div key={p.genre_id} style={{ animation: 'fadeUp 0.25s ease' }}>

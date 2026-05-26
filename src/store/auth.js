@@ -7,46 +7,43 @@ export const useAuthStore = create((set, get) => ({
   loading: true,
 
   init: async () => {
-    const { data: { session } } = await supabase.auth.getSession()
-    if (session?.user) {
-      set({ user: session.user })
-      await get().fetchProfile(session.user.id)
-    }
-    set({ loading: false })
-
-    supabase.auth.onAuthStateChange(async (_event, session) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
       if (session?.user) {
         set({ user: session.user })
         await get().fetchProfile(session.user.id)
+      }
+    } catch (e) {
+      console.error('Auth init error:', e)
+    } finally {
+      set({ loading: false })
+    }
+
+    supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (session?.user) {
+        set({ user: session.user, loading: false })
+        await get().fetchProfile(session.user.id)
       } else {
-        set({ user: null, profile: null })
+        set({ user: null, profile: null, loading: false })
       }
     })
   },
 
   fetchProfile: async (userId) => {
-    const { data } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', userId)
-      .single()
-    if (data) set({ profile: data })
+    try {
+      const { data } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', userId)
+        .single()
+      if (data) set({ profile: data })
+    } catch (e) {
+      console.error('Profile fetch error:', e)
+    }
   },
 
   signOut: async () => {
     await supabase.auth.signOut()
     set({ user: null, profile: null })
-  },
-}))
-
-export const useProgressStore = create((set) => ({
-  genreProgress: [],
-
-  fetchProgress: async (userId) => {
-    const { data } = await supabase
-      .from('user_genre_progress')
-      .select(`*, genres(name, slug), sub_paths(name, slug)`)
-      .eq('user_id', userId)
-    if (data) set({ genreProgress: data })
   },
 }))

@@ -30,7 +30,7 @@ export function DashboardPage() {
 
     const { data: qs } = await supabase
       .from('user_quests')
-      .select('*, quest_templates(title, description, quest_type, frequency, base_xp, proof_type, sub_path_id, session_slug)')
+      .select('id, status, session_slug, assigned_at, completed_at, xp_awarded, quest_templates(title, description, quest_type, frequency, base_xp, proof_type, sub_path_id, session_slug)')
       .eq('user_id', user.id)
       .in('status', ['active', 'completed'])
 
@@ -241,7 +241,9 @@ export function DashboardPage() {
         const todaySessionSlug = p.last_session_date === today ? p.last_session_slug : null
         const dailies = genreQuests.filter(q => {
           if (q.quest_templates?.frequency !== 'daily') return false
-          const qSession = q.quest_templates?.session_slug
+          // Use session_slug from the user_quest row (set on insert)
+          // Fall back to quest_templates.session_slug
+          const qSession = q.session_slug || q.quest_templates?.session_slug || null
           // Always show null session quests (protein etc)
           if (!qSession) return true
           // Only show today's picked session quests

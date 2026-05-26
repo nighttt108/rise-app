@@ -123,7 +123,6 @@ export function SessionPicker({ progress, userId, onSessionPicked, onClose }) {
       }
 
       // Step 5: Update progress
-      const today = new Date().toISOString().split('T')[0]
       const { error: progErr } = await supabase
         .from('user_genre_progress')
         .update({ last_session_slug: session.slug, last_session_date: today })

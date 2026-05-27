@@ -28,17 +28,30 @@ export function DashboardPage() {
       .select('*, genres(name, slug), sub_paths(name, slug)')
       .eq('user_id', user.id)
 
+    const todayStr = new Date().toISOString().split('T')[0]
+
     const { data: qs } = await supabase
       .from('user_quests')
       .select('id, status, session_slug, assigned_at, completed_at, xp_awarded, quest_templates(title, description, quest_type, frequency, base_xp, proof_type, sub_path_id, session_slug)')
       .eq('user_id', user.id)
       .in('status', ['active', 'completed'])
 
+    // Filter: weekly/gate always show, daily only show if assigned today
+    const filteredQs = (qs || []).filter(q => {
+      const freq = q.quest_templates?.frequency
+      if (freq === 'weekly' || freq === 'one_time') return true
+      if (freq === 'daily') {
+        const assignedDate = q.assigned_at?.split('T')[0]
+        return assignedDate === todayStr
+      }
+      return true
+    })
+
     if (prog) {
       setProgress(prog)
       setExpandedGenre(prev => prev || prog[0]?.genre_id || null)
     }
-    if (qs) setQuests(qs)
+    if (filteredQs) setQuests(filteredQs)
     setLoading(false)
   }
 

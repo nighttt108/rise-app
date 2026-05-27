@@ -43,107 +43,44 @@ export function SessionPicker({ progress, userId, onSessionPicked, onClose }) {
   const subPathSlug = progress?.sub_paths?.slug
   const sessions = SESSION_CONFIG[subPathSlug] || []
   const [selecting, setSelecting] = useState(null)
+  const [error, setError] = useState(null)
   const today = new Date().toISOString().split('T')[0]
   const [todaySession, setTodaySession] = useState(
     progress?.last_session_date === today ? progress?.last_session_slug : null
   )
 
-  console.log('SessionPicker mounted:', { subPathSlug, subPathId: progress?.sub_path_id, sessions: sessions.length })
-
   async function pickSession(session) {
     setSelecting(session.slug)
-    console.log('Picking session:', session.slug, 'sub_path_id:', progress.sub_path_id)
+    setError(null)
 
-    try {
-      // Step 1: Get all session template ids for this sub_path first
-      const { data: allSessionTemplates, error: allErr } = await supabase
-        .from('quest_templates')
-        .select('id')
-        .eq('sub_path_id', progress.sub_path_id)
-        .eq('frequency', 'daily')
-        .not('session_slug', 'is', null)
+    const { data, error: rpcErr } = await supabase.rpc('pick_session', {
+      p_user_id: userId,
+      p_progress_id: progress.id,
+      p_sub_path_id: progress.sub_path_id,
+      p_session_slug: session.slug,
+    })
 
-      console.log('All session templates:', allSessionTemplates?.length, allErr)
-
-      // Step 2: Expire existing active ones
-      if (allSessionTemplates?.length > 0) {
-        const ids = allSessionTemplates.map(t => t.id)
-        const { error: expireErr } = await supabase
-          .from('user_quests')
-          .update({ status: 'expired' })
-          .eq('user_id', userId)
-          .eq('status', 'active')
-          .in('quest_template_id', ids)
-
-        console.log('Expire result:', expireErr || 'ok')
-      }
-
-      // Step 3: Fetch templates for picked session only
-      const { data: templates, error: tErr } = await supabase
-        .from('quest_templates')
-        .select('id, title, session_slug')
-        .eq('sub_path_id', progress.sub_path_id)
-        .eq('session_slug', session.slug)
-        .eq('is_active', true)
-
-      console.log('Templates for session:', session.slug, templates, tErr)
-
-      if (tErr || !templates?.length) {
-        console.error('No templates found:', tErr)
-        setSelecting(null)
-        return
-      }
-
-      // Step 4: Insert new quests
-      const endOfDay = new Date()
-      endOfDay.setHours(23, 59, 59, 999)
-
-      const toInsert = templates.map(t => ({
-        user_id: userId,
-        quest_template_id: t.id,
-        session_slug: session.slug,
-        status: 'active',
-        assigned_at: new Date().toISOString(),
-        expires_at: endOfDay.toISOString(),
-      }))
-
-      console.log('Inserting:', toInsert.length, 'quests')
-
-      const { data: inserted, error: insertErr } = await supabase
-        .from('user_quests')
-        .insert(toInsert)
-        .select()
-
-      console.log('Inserted:', inserted, insertErr)
-
-      if (insertErr) {
-        console.error('Insert failed:', insertErr)
-        setSelecting(null)
-        return
-      }
-
-      // Step 5: Update progress
-      const { error: progErr } = await supabase
-        .from('user_genre_progress')
-        .update({ last_session_slug: session.slug, last_session_date: today })
-        .eq('id', progress.id)
-
-      console.log('Progress update:', progErr || 'ok')
-
-      setTodaySession(session.slug)
+    if (rpcErr) {
+      console.error('pick_session RPC error:', rpcErr)
+      setError('Something went wrong. Try again.')
       setSelecting(null)
-      onSessionPicked(session)
-
-    } catch (err) {
-      console.error('pickSession crashed:', err)
-      setSelecting(null)
+      return
     }
+
+    if (!data?.success) {
+      console.error('pick_session failed:', data?.error)
+      setError(data?.error || 'Failed to assign quests.')
+      setSelecting(null)
+      return
+    }
+
+    console.log('Session picked:', data)
+    setTodaySession(session.slug)
+    setSelecting(null)
+    onSessionPicked(session)
   }
 
-  if (!sessions.length) {
-    console.warn('No sessions for subPathSlug:', subPathSlug)
-    return null
-  }
+  if (!sessions.length) return null
 
   return (
     <div
@@ -151,6 +88,7 @@ export function SessionPicker({ progress, userId, onSessionPicked, onClose }) {
       onClick={e => e.target === e.currentTarget && onClose()}
     >
       <div style={{ width: '100%', maxWidth: '520px', background: 'var(--bg-surface)', borderRadius: '20px 20px 0 0', padding: '24px', animation: 'fadeUp 0.25s ease' }}>
+
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
           <div style={{ fontFamily: 'var(--font-display)', fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '0.05em' }}>
             WHAT ARE YOU TRAINING?
@@ -159,10 +97,17 @@ export function SessionPicker({ progress, userId, onSessionPicked, onClose }) {
             <X size={20} />
           </button>
         </div>
+
         <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '20px' }}>
           Pick today's session — your quests will update instantly.
           {todaySession && <span style={{ color: 'var(--accent-purple)', marginLeft: '6px' }}>Switching replaces today's session.</span>}
         </div>
+
+        {error && (
+          <div style={{ padding: '10px 14px', marginBottom: '12px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '8px', fontSize: '13px', color: '#f87171' }}>
+            {error}
+          </div>
+        )}
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '8px' }}>
           {sessions.map(session => {
@@ -187,7 +132,10 @@ export function SessionPicker({ progress, userId, onSessionPicked, onClose }) {
           Rest day? Just close this — no action needed.
         </div>
       </div>
-      <style>{`@keyframes spin { from{transform:rotate(0deg);}to{transform:rotate(360deg);} } @keyframes fadeUp { from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);} }`}</style>
+      <style>{`
+        @keyframes spin { from{transform:rotate(0deg);}to{transform:rotate(360deg);} }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);} }
+      `}</style>
     </div>
   )
 }
